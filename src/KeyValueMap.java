@@ -21,7 +21,7 @@ public class KeyValueMap<K,V> {
     	  indexall++;
       }
       public void nextReduce() {
-    	  indexall++;
+    	  index++;
       }
       
       public boolean hasNextMap() {
@@ -74,9 +74,6 @@ public class KeyValueMap<K,V> {
             map.put(mkey.get(i),mvaluelist.get(i));
            return map;
       }
-//    /*
-//     *获取全部元素
-//     */
 //     public Map<K,List<V>> getAll(){
 //         Map<K,List<V>> map = new HashMap<>();
 //         for (int i = 0; i < mkey.size(); i++) {

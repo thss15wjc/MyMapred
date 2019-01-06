@@ -55,8 +55,8 @@ public class Job {
     public void run() throws ClassNotFoundException, IOException, InterruptedException {
         RecordReader<LongWritable, Text> recordReader = new RecordReader<LongWritable, Text>() {
             private FileInputOutput fileInput;
-            Text line;
-            LongWritable index;
+            Text line = new Text();
+            LongWritable index = new LongWritable();
 
             @Override
             public void initialize(FileInputOutput input) throws IOException, InterruptedException {
@@ -97,7 +97,9 @@ public class Job {
                 new MapContextImpl<>(recordReader);
         WordCount.MyMapper mapper = new WordCount.MyMapper();
         mapper.run(mapContext);
-        
+
+        System.out.println("hahaha! Map finish.");
+
         ReduceContextImpl<Text, LongWritable, Text, LongWritable> reduceContext =
                 new ReduceContextImpl<Text, LongWritable, Text, LongWritable>(mapContext.getoutput(), fileOutput);
         WordCount.MyReducer reducer = new WordCount.MyReducer();

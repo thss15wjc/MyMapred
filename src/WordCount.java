@@ -28,7 +28,7 @@ public class WordCount {
             Mapper<LongWritable, Text, Text, LongWritable> {
         protected void map(LongWritable k1, Text v1, MapContextImpl<LongWritable, Text, Text, LongWritable> context)
                 throws java.io.IOException, InterruptedException {
-            String[] splited = v1.toString().split("\t");
+            String[] splited = v1.toString().split(" ");
             for (String word : splited) {
                 context.write(new Text(word), new LongWritable(1));
             }

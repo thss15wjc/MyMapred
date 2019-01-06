@@ -11,6 +11,7 @@ public class ReduceContextImpl<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
          ) throws InterruptedException, IOException{
 	//input.sort();
 	this.input = input;
+	this.writer = output;
 	}
 
 	public boolean nextKey() throws IOException,InterruptedException {
@@ -27,10 +28,8 @@ public class ReduceContextImpl<KEYIN,VALUEIN,KEYOUT,VALUEOUT>
 	}
 
 	public void write(KEYOUT key, VALUEOUT value) throws IOException, InterruptedException {
-		String writestr = "key:" + (String) key + " value:" + (String) value; 
-		writer.openFileOut("/output/testoutput.txt");
+		String writestr = "key:" + key.toString() + " value:" + value.toString()+"\n";
 		writer.putString(writestr);
-		writer.closeFileOut();
 	}
 	
 	public void next() throws IOException, InterruptedException {

@@ -33,6 +33,7 @@ public class Reducer<KEYIN,VALUEIN,KEYOUT,VALUEOUT> {
     try {
       while (context.nextKey()) {
         reduce(context.getCurrentKey(), context.getValues(), context);
+        context.next();
       }
     } finally {
       cleanup(context);
