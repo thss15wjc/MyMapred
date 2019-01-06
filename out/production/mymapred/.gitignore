@@ -1,0 +1,15 @@
+/Counter.class
+/FileInput.class
+/JobContext.class
+/LineRecordReader.class
+/LineRecordWriter.class
+/MapContextImpl.class
+/Mapper$Context.class
+/Mapper.class
+/MapperContext.class
+/MapperInput.class
+/OutputCommitter.class
+/RecordReader.class
+/RecordWriter.class
+/StatusReporter.class
+/TaskAttemptID.class

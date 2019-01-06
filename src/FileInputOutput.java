@@ -7,12 +7,13 @@ import org.apache.hadoop.conf.*;
 import org.apache.commons.lang.*;
 import org.apache.log4j.Logger;
 
-public class FileInput {
+public class FileInputOutput {
     private String HDFSUri = "";
     private Logger logger = Logger.getLogger(Mapper.class);
     private Configuration conf = new Configuration();
-    private FileSystem fs;
+    private FileSystem fsIn, fsOut;
     private FSDataInputStream hdfsInStream;
+    private FSDataOutputStream hdfsOutStream;
 
     private byte[] ioBuffer;
     private int curIndex;
@@ -21,21 +22,24 @@ public class FileInput {
     private int bufferSize = 1024;
 
     public static void main(String[] args) throws Exception {
-        FileInput fileInput = new FileInput();
+        FileInputOutput fileInputOutput = new FileInputOutput();
         String hdfsUri = "hdfs://localhost:9000";
-        fileInput.setHDFSUri(hdfsUri);
-        fileInput.conf.set("fs.defaultFS", hdfsUri);
+        fileInputOutput.setHDFSUri(hdfsUri);
         //FileSystem fs = FileSystem.get(conf);
         //mkdir("/xxx");
-        fileInput.openFile("/input/testinput.txt");
-        while (fileInput.atEOF == 0) {
-            System.out.println("# " + fileInput.getLine() + " #");
+        fileInputOutput.openFileIn("/input/testinput.txt");
+        while (fileInputOutput.atEOF == 0) {
+            System.out.println("# " + fileInputOutput.getLine() + " #");
         }
-        fileInput.closeFile();
+        fileInputOutput.closeFileIn();
+        fileInputOutput.openFileOut("/output/testoutput.txt");
+        fileInputOutput.putString("first line\nsecond line");
+        fileInputOutput.closeFileOut();
     }
 
     public void setHDFSUri(String hdfsUri) {
         HDFSUri = hdfsUri;
+        conf.set("fs.defaultFS", hdfsUri);
     }
 
     public int getAtEOF() {
@@ -62,21 +66,35 @@ public class FileInput {
         return fs;
     }
 
-    public void openFile(String path) throws IOException {
-        fs = getFileSystem();
+    public void openFileIn(String path) throws IOException {
+        fsIn = getFileSystem();
         String hdfsUri = HDFSUri;
         if (StringUtils.isNotBlank(hdfsUri)) {
             path = hdfsUri + path;
         }
-        hdfsInStream = fs.open(new Path(path));
+        hdfsInStream = fsIn.open(new Path(path));
         ioBuffer = new byte[bufferSize];
         curIndex = -1;
         atEOF = 0;
     }
 
-    public void closeFile() throws IOException {
+    public void closeFileIn() throws IOException {
         hdfsInStream.close();
-        fs.close();
+        fsIn.close();
+    }
+
+    public void openFileOut(String path) throws IOException {
+        fsOut = getFileSystem();
+        String hdfsUri = HDFSUri;
+        if (StringUtils.isNotBlank(hdfsUri)) {
+            path = hdfsUri + path;
+        }
+        hdfsOutStream = fsOut.create(new Path(path));
+    }
+
+    public void closeFileOut() throws IOException {
+        hdfsOutStream.close();
+        fsOut.close();
     }
 
     public void mkdir(String path) {
@@ -131,5 +149,10 @@ public class FileInput {
                 nextIndex = 0;
             }
         }
+    }
+
+    public void putString(String s) throws IOException {
+        byte[] bytes = s.getBytes("UTF-8");
+        hdfsOutStream.write(bytes, 0, bytes.length);
     }
 }
